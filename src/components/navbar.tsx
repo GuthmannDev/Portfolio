@@ -5,9 +5,11 @@ import { DesktopNavbar } from './desktop-navbar';
 import { MobileNavbar } from './mobile-navbar';
 
 function useDeviceType() {
-  const [isDesktop, setIsDesktop] = useState(true);
+  // Initialize with null to avoid hydration mismatch
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // Only run on client side
     const checkDevice = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
@@ -22,11 +24,24 @@ function useDeviceType() {
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
-  return isDesktop;
+  // Return true (desktop) as default during SSR
+  return isDesktop ?? true;
 }
 
 export function Navbar() {
   const isDesktop = useDeviceType();
+
+  // Add a mounting check to prevent hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    // Return a placeholder with the same dimensions to prevent layout shift
+    return <nav className="h-16" />;
+  }
 
   return (
     <>
