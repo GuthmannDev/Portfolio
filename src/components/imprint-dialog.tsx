@@ -1,6 +1,7 @@
 'use client'
 
 import { useToast } from '@/hooks/use-toast'
+import { useRef, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -18,13 +19,31 @@ interface ImprintDialogProps {
 
 export default function ImprintDialog({ open, onOpenChange }: ImprintDialogProps) {
   const { toast } = useToast()
+  const mounted = useRef(true)
+
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+    }
+  }, [])
   
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast({
-        description: `${label} copied to clipboard`,
-      })
-    })
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      if (mounted.current) {
+        toast({
+          description: `${label} copied to clipboard`,
+        })
+      }
+    } catch (error) {
+      if (mounted.current) {
+        toast({
+          description: 'Failed to copy to clipboard',
+          variant: 'destructive',
+        })
+      }
+    }
   }
 
   return (<Dialog open={open} onOpenChange={onOpenChange}>
