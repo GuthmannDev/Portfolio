@@ -16,7 +16,7 @@ interface ImprintDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function ImprintDialog({ open, onOpenChange }: ImprintDialogProps) {
+export default function ImprintDialog({ open, onOpenChange }: ImprintDialogProps) {
   const { toast } = useToast()
   
   const copyToClipboard = (text: string, label: string) => {

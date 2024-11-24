@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useState } from "react"
-import { ImprintDialog } from './imprint-dialog'
+import ImprintDialog from './imprint-dialog'
 
 export function LegalButton() {
   const [showImprint, setShowImprint] = useState(false)

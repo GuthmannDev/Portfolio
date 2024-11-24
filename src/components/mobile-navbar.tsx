@@ -139,34 +139,41 @@ const ThemeDropdown = memo(({ theme, setTheme }: { theme: string | undefined; se
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-auto p-0" aria-label="Change theme">
-          <div className="grid grid-cols-[auto_auto] place-items-center gap-1">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={isOpen ? 'up' : 'down'}
-                initial={{ rotate: 0 }}
-                animate={{ rotate: isOpen ? 180 : 0 }}
-                exit={{ rotate: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isOpen ? <LuChevronDown className="w-4 h-4" /> : <LuChevronUp className="w-4 h-4" />}
-              </motion.div>
-            </AnimatePresence>
-            <ThemeIcon theme={theme} />
-          </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="flex items-center gap-1" 
+          aria-label="Change theme"
+        >
+          <ThemeIcon theme={theme} />
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <LuChevronDown className="w-4 h-4" />
+          </motion.div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="origin-bottom-right">
-        <div className="grid gap-3 p-4 min-w-fit">
-          <DropdownMenuItem onClick={() => setTheme('light')} className="grid grid-cols-[24px_auto] gap-2 items-center hover:text-primary transition-colors whitespace-nowrap">
+      <DropdownMenuContent align="end">
+        <div className="grid gap-2 p-3">
+          <DropdownMenuItem 
+            onClick={() => setTheme('light')} 
+            className="flex items-center gap-2 hover:text-primary transition-colors"
+          >
             <LuSun className="w-4 h-4" />
             <span className="text-sm font-medium">Light</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('dark')} className="grid grid-cols-[24px_auto] gap-2 items-center hover:text-primary transition-colors whitespace-nowrap">
+          <DropdownMenuItem 
+            onClick={() => setTheme('dark')} 
+            className="flex items-center gap-2 hover:text-primary transition-colors"
+          >
             <LuMoon className="w-4 h-4" />
             <span className="text-sm font-medium">Dark</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('system')} className="grid grid-cols-[24px_auto] gap-2 items-center hover:text-primary transition-colors whitespace-nowrap">
+          <DropdownMenuItem 
+            onClick={() => setTheme('system')} 
+            className="flex items-center gap-2 hover:text-primary transition-colors"
+          >
             <LuMonitor className="w-4 h-4" />
             <span className="text-sm font-medium">System</span>
           </DropdownMenuItem>
@@ -247,68 +254,60 @@ export function MobileNavbar({ className }: { className?: string }) {
               <LuMenu className="h-6 w-6" aria-hidden="true" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className={cn(SHEET_WIDTHS.default, SHEET_WIDTHS.sm, "overflow-y-auto")}>
-            <SheetHeader>
-              <SheetTitle>Navigation Menu</SheetTitle>
+          <SheetContent side="right" className={cn(SHEET_WIDTHS.default, SHEET_WIDTHS.sm, "flex flex-col p-0")}>
+            <SheetHeader className="p-6">
+              <SheetTitle className="text-xl font-bold">Menu</SheetTitle>
             </SheetHeader>
             
-            <div className="mt-8 grid gap-2">
-              <NavItem 
-                href="/"
-                icon={<LuHome className="h-4 w-4" aria-hidden="true" />}
-                label="Home"
-                onClick={() => setIsOpen(false)}
-              />
-              
-              {user && (
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid gap-2 px-4">
                 <NavItem 
-                  href="/dashboard"
-                  icon={<LuLayoutDashboard className="h-4 w-4" aria-hidden="true" />}
-                  label="Dashboard"
+                  href="/"
+                  icon={<LuHome className="h-4 w-4" aria-hidden="true" />}
+                  label="Home"
                   onClick={() => setIsOpen(false)}
                 />
-              )}
-              
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="h-auto w-full p-2 bg-transparent hover:bg-muted rounded-lg transition-colors">
-                      <div className="grid grid-cols-[auto_1fr] gap-4 place-items-center">
-                        <div className="grid place-items-center text-muted-foreground group-hover:text-foreground transition-colors">
-                          <LuFolderOpen className="h-4 w-4" aria-hidden="true" />
+                
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className="h-auto w-full p-2 bg-transparent hover:bg-muted rounded-lg transition-colors">
+                        <div className="grid grid-cols-[auto_1fr] gap-4 place-items-center">
+                          <div className="grid place-items-center text-muted-foreground group-hover:text-foreground transition-colors">
+                            <LuFolderOpen className="h-4 w-4" aria-hidden="true" />
+                          </div>
+                          <span className="text-sm">Projects</span>
                         </div>
-                        <span className="text-sm">Projects</span>
-                      </div>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <div className="grid gap-2 p-4">
-                        {projects.map((project) => (
-                          <ProjectLink 
-                            key={project.id} 
-                            project={project} 
-                            onClose={() => setIsOpen(false)} 
-                          />
-                        ))}
-                      </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
-              
-              <NavItem 
-                icon={<LuUsers className="h-4 w-4" aria-hidden="true" />}
-                label="Connect"
-                onClick={() => {
-                  setIsOpen(false);
-                  setSocialLinksOpen(true);
-                }}
-              />
-            </div>
-            <div className="absolute bottom-4 inset-x-4 grid grid-cols-[auto_1fr] gap-4 items-center">
-              <GitHubAuthButton />
-              <div className="justify-self-end">
-                <ThemeDropdown theme={theme} setTheme={setTheme} />
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <div className="grid gap-2 p-4">
+                          {projects.map((project) => (
+                            <ProjectLink 
+                              key={project.id} 
+                              project={project} 
+                              onClose={() => setIsOpen(false)} 
+                            />
+                          ))}
+                        </div>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
+                
+                <NavItem 
+                  icon={<LuUsers className="h-4 w-4" aria-hidden="true" />}
+                  label="Connect"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setSocialLinksOpen(true);
+                  }}
+                />
               </div>
+            </div>
+          
+            <div className="flex items-center justify-between gap-4 p-6 mt-auto">
+              <GitHubAuthButton />
+              <ThemeDropdown theme={theme} setTheme={setTheme} />
             </div>
           </SheetContent>
         </Sheet>

@@ -1,4 +1,4 @@
-Cascade, those are your rules:
+Project Rules for AI:
 
 1. Use TailwindCSS, ShadCN-UI and React Icons.
 2. Use NextJS Native functions like <Image> or <Link>.
@@ -7,9 +7,10 @@ Cascade, those are your rules:
 5. Make sure to make it mobile/tablet friendly. Except a file starts with desktop- or mobile-
 6. Use Drizzle ORM.
 7. Remove unused Imports.
-8. Optimize the code, make functions as small as possible but still readable and add reused code into functions. DO NOT REMOVE ANY FUNCTIONALITY (e.g. Hover Events on HTML Elements, Animations, etc.).
+8. Always optimize the code, make functions as small as possible but still readable and add reused code into functions. DO NOT REMOVE ANY FUNCTIONALITY (e.g. Hover Events on HTML Elements, Animations, etc.). And in answers, provide the full new code
 9. Remove Redundant Code.
 10. Add SEO and check if the page works for SEO, if not, then change it.
+11. Always add JSDoc and Documentation
 
 File/Folder Blacklist:
 - node_modules

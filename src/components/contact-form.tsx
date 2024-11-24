@@ -163,10 +163,10 @@ export function ContactForm({
         />
         <Button 
           type="submit" 
-          className="w-full sm:w-auto justify-self-start"
           disabled={isSubmitting}
+          className="w-full sm:w-auto"
         >
-          {isSubmitting ? 'Sending...' : 'Send Message'}
+          {isSubmitting ? "Sending..." : "Send Message"}
         </Button>
       </form>
     </Form>

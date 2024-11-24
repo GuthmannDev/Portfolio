@@ -4,8 +4,8 @@ import { Resend } from 'resend'
 import { email, maxLength, minLength, object, parse, pipe, string, ValiError } from 'valibot'
 
 // Rate limiting configuration
-const RATE_LIMIT = 5; // Maximum requests per minute
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute in milliseconds
+const RATE_LIMIT = 5;
+const RATE_LIMIT_WINDOW = 60 * 1000;
 const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
 
 // Email validation schema
@@ -21,7 +21,7 @@ const contactSchema = object({
   ),
   message: pipe(
     string(),
-    minLength(1, "Message must be at least 1 characters long"),
+    minLength(1, "Message must be at least 1 character long"),
     maxLength(1000, "Message must be less than 1000 characters")
   ),
 })
@@ -37,24 +37,16 @@ if (!process.env.EMAIL_FROM_ADDRESS) {
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// Rate limiting function
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
   const userLimit = rateLimitMap.get(ip);
 
-  if (!userLimit) {
+  if (!userLimit || now - userLimit.timestamp > RATE_LIMIT_WINDOW) {
     rateLimitMap.set(ip, { count: 1, timestamp: now });
     return true;
   }
 
-  if (now - userLimit.timestamp > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(ip, { count: 1, timestamp: now });
-    return true;
-  }
-
-  if (userLimit.count >= RATE_LIMIT) {
-    return false;
-  }
+  if (userLimit.count >= RATE_LIMIT) return false;
 
   userLimit.count++;
   return true;
@@ -63,19 +55,17 @@ function checkRateLimit(ip: string): boolean {
 // Clean up old rate limit entries every hour
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, data] of rateLimitMap.entries()) {
+  rateLimitMap.forEach((data, ip) => {
     if (now - data.timestamp > RATE_LIMIT_WINDOW) {
       rateLimitMap.delete(ip);
     }
-  }
+  });
 }, 60 * 60 * 1000);
 
 export async function POST(request: Request) {
   try {
-    // Get client IP for rate limiting
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
     
-    // Check rate limit
     if (!checkRateLimit(ip)) {
       return Response.json({
         success: false,
@@ -84,11 +74,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    
-    // Validate the request body
     const { name, email, message } = parse(contactSchema, body);
 
-    // Send email
     const emailResult = await resend.emails.send({
       from: email,
       to: process.env.EMAIL_FROM_ADDRESS!,
@@ -97,20 +84,19 @@ export async function POST(request: Request) {
       text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
     })
 
-    if (!emailResult.id) {
+    if (!emailResult.data?.id) {
       throw new Error('Failed to send email');
     }
 
     return Response.json({ 
       success: true,
       message: "Email sent successfully",
-      id: emailResult.id
+      id: emailResult.data?.id
     })
   } catch (error) {
-    // Handle validation errors
     if (error instanceof ValiError) {
-      const messages = error.issues.map((issue: { path?: { key: string }[]; message: string }) => {
-        const path = issue.path?.map(p => p.key).join(".") || "unknown"
+      const messages = error.issues.map(issue => {
+        const path = issue.path?.map((p: { key: any; }) => p.key).join(".") || "unknown"
         return `${path}: ${issue.message}`
       }).join(", ")
       
@@ -120,30 +106,17 @@ export async function POST(request: Request) {
       }, { status: 400 })
     }
 
-    // Handle other known errors
     if (error instanceof Error) {
-      console.error('Contact form error:', {
-        type: error.name,
-        message: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      });
-
+      console.error('Contact form error:', error.message);
       return Response.json({
         success: false,
-        error: process.env.NODE_ENV === 'development' 
-          ? error.message 
-          : 'An error occurred while sending your message'
-      }, { status: 400 })
+        error: 'An unexpected error occurred'
+      }, { status: 500 })
     }
 
-    // Handle unknown errors
-    console.error("Unexpected contact form error:", error)
-    return Response.json(
-      { 
-        success: false,
-        error: 'An unexpected error occurred'
-      },
-      { status: 500 }
-    )
+    return Response.json({
+      success: false,
+      error: 'An unknown error occurred'
+    }, { status: 500 })
   }
 }

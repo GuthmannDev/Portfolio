@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from "@/components/navbar";
 import { LegalButton } from "@/components/legal-button";
-import { Favicon } from "@/components/favicon";
 import db from '@/db/db'
 import { projectsTable } from "@/db/schema";
 
@@ -139,17 +138,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen grid grid-rows-[auto_1fr_auto] relative`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Favicon />
-          <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
+          <div className="flex flex-col flex-1">
             <Navbar />
-            <main className="w-full">
+            <main className="flex-1 w-full">
               {children}
             </main>
             <LegalButton />

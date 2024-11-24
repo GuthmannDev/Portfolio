@@ -19,6 +19,7 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
 } from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
 import { usePathname } from 'next/navigation';
 import { motion } from "framer-motion";
 import { SocialLinks } from './social-links';
@@ -148,13 +149,14 @@ export function DesktopNavbar({ className }: { className?: string }) {
                   </NavigationMenuItem>
 
                   <NavigationMenuItem className="grid place-items-center">
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => setSocialLinksOpen(true)}
-                      className="grid grid-cols-[auto_1fr] gap-2 place-items-center hover:text-primary transition-colors"
+                      className="grid grid-cols-[auto_1fr] gap-2 place-items-center hover:text-primary transition-colors p-0 h-auto"
                     >
                       <LuUsers className="w-4 h-4" />
                       <span className="text-sm font-medium">Connect</span>
-                    </button>
+                    </Button>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
@@ -175,27 +177,30 @@ export function DesktopNavbar({ className }: { className?: string }) {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <div className="grid gap-3 p-4 w-[200px]">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setTheme('light')}
-                          className="grid grid-cols-[24px_1fr] gap-2 items-center hover:text-primary transition-colors"
+                          className="grid grid-cols-[24px_1fr] gap-2 items-center hover:text-primary transition-colors w-full justify-start p-2 h-auto"
                         >
                           <LuSun className="w-4 h-4" />
                           <span className="text-sm font-medium">Light</span>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => setTheme('dark')}
-                          className="grid grid-cols-[24px_1fr] gap-2 items-center hover:text-primary transition-colors"
+                          className="grid grid-cols-[24px_1fr] gap-2 items-center hover:text-primary transition-colors w-full justify-start p-2 h-auto"
                         >
                           <LuMoon className="w-4 h-4" />
                           <span className="text-sm font-medium">Dark</span>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => setTheme('system')}
-                          className="grid grid-cols-[24px_1fr] gap-2 items-center hover:text-primary transition-colors"
+                          className="grid grid-cols-[24px_1fr] gap-2 items-center hover:text-primary transition-colors w-full justify-start p-2 h-auto"
                         >
                           <LuMonitor className="w-4 h-4" />
                           <span className="text-sm font-medium">System</span>
-                        </button>
+                        </Button>
                       </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>

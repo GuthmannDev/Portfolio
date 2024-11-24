@@ -43,46 +43,6 @@ export default function Dashboard() {
             </p>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Details</CardTitle>
-            <CardDescription>Your GitHub information</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-sm">
-                <span className="font-medium">Username:</span>{' '}
-                {user.user_metadata.user_name || 'N/A'}
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Full Name:</span>{' '}
-                {user.user_metadata.full_name || 'N/A'}
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Last Sign In:</span>{' '}
-                {new Date(user.last_sign_in_at || '').toLocaleDateString()}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks and settings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <button 
-                className="w-full px-4 py-2 text-sm font-medium text-center bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                onClick={() => router.push('/dashboard/settings')}
-              >
-                Account Settings
-              </button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

@@ -10,10 +10,10 @@ export function GitHubAuthButton() {
       variant="outline"
       size="icon"
       onClick={signInWithGithub}
-      className="rounded-full"
-      title="Sign in with GitHub"
+      className="rounded-full hover:bg-muted transition-colors"
+      aria-label="Sign in with GitHub"
     >
-      <LuFingerprint className="h-5 w-5" />
+      <LuFingerprint className="h-5 w-5" aria-hidden="true" />
     </Button>
   );
 }
