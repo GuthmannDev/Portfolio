@@ -21,7 +21,6 @@ import Link from 'next/link'
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { calculateDates } from '@/lib/date-utils'
-import ReactEmojis from "@souhaildev/reactemojis"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,7 +66,7 @@ export default function Home() {
             <div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
                 <div className="flex items-center gap-2 md:justify-start">
-                  Hi, I'm Max <span className="-translate-y-2"><ReactEmojis emoji="👋" emojiStyle='2' style={{ height: 75, width: 75 }} /></span>
+                  Hi, I'm Max <span className="inline-block animate-wave origin-[70%_70%] text-5xl md:text-6xl">👋</span>
                 </div>
               </h1>
               <p className="text-xl text-muted-foreground">

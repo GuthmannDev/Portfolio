@@ -10,6 +10,8 @@ function useDeviceType() {
 
   useEffect(() => {
     // Only run on client side
+    if (typeof window === 'undefined') return;
+
     const checkDevice = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
@@ -30,15 +32,13 @@ function useDeviceType() {
 
 export function Navbar() {
   const isDesktop = useDeviceType();
-
-  // Add a mounting check to prevent hydration issues
-  const [isMounted, setIsMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setMounted(true);
   }, []);
 
-  if (!isMounted) {
+  if (!mounted) {
     // Return a placeholder with the same dimensions to prevent layout shift
     return <nav className="h-16" />;
   }

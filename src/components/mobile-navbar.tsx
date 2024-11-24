@@ -35,7 +35,7 @@ import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { SocialLinks } from './social-links';
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeIcon } from './theme-icon';
@@ -195,22 +195,31 @@ export function MobileNavbar({ className }: { className?: string }) {
   const searchParams = useSearchParams();
   const { theme, setTheme } = useTheme();
   const { user } = useSession();
+  const initialized = useRef(false);
 
   const loadProjects = useCallback(() => {
-    const metadata = document.querySelector('meta[name="projects"]');
-    if (metadata) {
-      try {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const metadata = document.querySelector('meta[name="projects"]');
+      if (metadata) {
         const projectData = JSON.parse(metadata.getAttribute('content') || '[]');
         setProjects(projectData);
-      } catch (error) {
-        console.error('Failed to parse projects data:', error);
-        setProjects([]);
       }
+    } catch (error) {
+      console.error('Failed to parse projects data:', error);
+      setProjects([]);
     }
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (initialized.current || typeof window === 'undefined') return;
+    initialized.current = true;
     loadProjects();
   }, [loadProjects]);
 

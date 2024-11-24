@@ -1,7 +1,7 @@
 'use server'
 
 import { Resend } from 'resend'
-import { email, maxLength, minLength, object, parse, pipe, string, ValiError } from 'valibot'
+import { z } from 'zod'
 
 // Rate limiting configuration
 const RATE_LIMIT = 5;
@@ -9,21 +9,15 @@ const RATE_LIMIT_WINDOW = 60 * 1000;
 const rateLimitMap = new Map<string, { count: number; timestamp: number }>();
 
 // Email validation schema
-const contactSchema = object({
-  name: pipe(
-    string(),
-    minLength(2, "Name must be at least 2 characters long"),
-    maxLength(50, "Name must be less than 50 characters"),
-  ),
-  email: pipe(
-    string(), 
-    email("Please enter a valid email address")
-  ),
-  message: pipe(
-    string(),
-    minLength(1, "Message must be at least 1 character long"),
-    maxLength(1000, "Message must be less than 1000 characters")
-  ),
+const contactSchema = z.object({
+  name: z.string()
+    .min(2, "Name must be at least 2 characters long")
+    .max(50, "Name must be less than 50 characters"),
+  email: z.string()
+    .email("Please enter a valid email address"),
+  message: z.string()
+    .min(1, "Message must be at least 1 character long")
+    .max(1000, "Message must be less than 1000 characters")
 })
 
 // Initialize Resend client
@@ -74,7 +68,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, email, message } = parse(contactSchema, body);
+    const { name, email, message } = contactSchema.parse(body);
 
     const emailResult = await resend.emails.send({
       from: email,
@@ -94,9 +88,9 @@ export async function POST(request: Request) {
       id: emailResult.data?.id
     })
   } catch (error) {
-    if (error instanceof ValiError) {
+    if (error instanceof z.ZodError) {
       const messages = error.issues.map(issue => {
-        const path = issue.path?.map((p: { key: string }) => p.key).join(".") || "unknown";
+        const path = issue.path?.join(".") || "unknown";
         return `${path}: ${issue.message}`
       }).join(", ")
       

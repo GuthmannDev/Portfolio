@@ -11,6 +11,7 @@ Project Rules for AI:
 9. Remove Redundant Code.
 10. Add SEO and check if the page works for SEO, if not, then change it.
 11. Always add JSDoc and Documentation
+12. Make everything SSR friendly
 
 File/Folder Blacklist:
 - node_modules

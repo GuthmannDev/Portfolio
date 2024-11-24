@@ -25,7 +25,7 @@ import { motion } from "framer-motion";
 import { SocialLinks } from './social-links';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useTheme } from "next-themes";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { ThemeIcon } from './theme-icon';
 import { GitHubAuthButton } from './auth/github-auth-button';
@@ -47,8 +47,10 @@ export function DesktopNavbar({ className }: { className?: string }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isNavigating, setIsNavigating] = useState(false);
   const pathname = usePathname();
+  const initialized = useRef(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     setMounted(true);
   }, []);
 
@@ -57,10 +59,18 @@ export function DesktopNavbar({ className }: { className?: string }) {
   }, [pathname]);
 
   useEffect(() => {
-    const metadata = document.querySelector('meta[name="projects"]');
-    if (metadata) {
-      const projectData = JSON.parse(metadata.getAttribute('content') || '[]');
-      setProjects(projectData);
+    if (initialized.current || typeof window === 'undefined') return;
+    initialized.current = true;
+
+    try {
+      const metadata = document.querySelector('meta[name="projects"]');
+      if (metadata) {
+        const projectData = JSON.parse(metadata.getAttribute('content') || '[]');
+        setProjects(projectData);
+      }
+    } catch (error) {
+      console.error('Failed to parse projects data:', error);
+      setProjects([]);
     }
   }, []);
 

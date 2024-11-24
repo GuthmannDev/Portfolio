@@ -1,8 +1,8 @@
 "use client"
 
 import { useForm } from "react-hook-form"
-import { valibotResolver } from "@hookform/resolvers/valibot"
-import { email, minLength, object, pipe, string, parse, maxLength, InferInput } from "valibot"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -17,24 +17,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 
-const contactSchema = object({
-  name: pipe(
-    string(),
-    minLength(2, "Name must be at least 2 characters long"),
-    maxLength(50, "Name must be less than 50 characters"),
-  ),
-  email: pipe(
-    string(), 
-    email("Please enter a valid email address")
-  ),
-  message: pipe(
-    string(),
-    minLength(1, "Message must be at least 1 characters long"),
-    maxLength(1000, "Message must be less than 1000 characters")
-  ),
+const contactSchema = z.object({
+  name: z.string()
+    .min(2, "Name must be at least 2 characters long")
+    .max(50, "Name must be less than 50 characters"),
+  email: z.string()
+    .email("Please enter a valid email address"),
+  message: z.string()
+    .min(1, "Message must be at least 1 character long")
+    .max(1000, "Message must be less than 1000 characters")
 })
 
-type ContactFormValues = InferInput<typeof contactSchema>
+type ContactFormValues = z.infer<typeof contactSchema>
 
 export function ContactForm({
   onSubmit: onSubmitProp
@@ -43,7 +37,7 @@ export function ContactForm({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const form = useForm<ContactFormValues>({
-    resolver: valibotResolver(contactSchema),
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -57,7 +51,7 @@ export function ContactForm({
     setIsSubmitting(true)
     try {
       // Validate form data
-      const result = await parse(contactSchema, values)
+      const result = await contactSchema.parseAsync(values)
 
       // Submit form data
       const response = await fetch('/api/contact', {

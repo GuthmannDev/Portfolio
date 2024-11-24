@@ -7,19 +7,29 @@ export const useSession = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const mounted = useRef(true);
+  const initialized = useRef(false);
 
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
     mounted.current = true;
 
     const getUser = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error fetching session:', error.message);
-        return;
-      }
-      if (mounted.current) {
-        setUser(session?.user ?? null);
-        setLoading(false);
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error fetching session:', error.message);
+          return;
+        }
+        if (mounted.current) {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error in getUser:', error);
+        if (mounted.current) {
+          setLoading(false);
+        }
       }
     };
 
