@@ -51,7 +51,7 @@ export function ContactForm({
     },
   })
 
-  const toast = useToast()
+  const {toast} = useToast()
 
   const onSubmit = async (values: ContactFormValues) => {
     setIsSubmitting(true)
@@ -74,7 +74,11 @@ export function ContactForm({
 
       // Call the onSubmit prop and show success message
       onSubmitProp(result)
-      toast.success('Message sent successfully!')
+      
+      toast({
+        title: "Success!",
+        description: 'E-Mail sent successfully!'
+      })
       form.reset()
     } catch (error) {
       // Log error with structured information
@@ -88,7 +92,11 @@ export function ContactForm({
         console.warn('Unexpected contact form error:', error)
       }
       
-      toast.error(error instanceof Error ? error.message : 'Failed to send message')
+      toast({
+        variant: "destructive",
+        title: "Error..",
+        description: error instanceof Error ? error.message : 'Failed to send message'
+      })
     } finally {
       setIsSubmitting(false)
     }
