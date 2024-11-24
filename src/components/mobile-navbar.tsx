@@ -284,7 +284,7 @@ export function MobileNavbar({ className }: { className?: string }) {
                           {projects.map((project) => (
                             <ProjectLink 
                               key={project.id} 
-                              project={project} 
+                              project={project}
                               onClose={() => setIsOpen(false)} 
                             />
                           ))}

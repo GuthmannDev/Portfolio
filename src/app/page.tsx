@@ -147,7 +147,7 @@ export default function Home() {
 
               <div className="flex-1 space-y-6">
                 <h2 className="text-2xl font-semibold">Skills</h2>
-                <div className="grid grid-cols-1 grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <TechStackLink
                     href="https://www.typescriptlang.org"
                     iconColor="#3178C6"

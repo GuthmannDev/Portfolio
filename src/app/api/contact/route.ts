@@ -96,7 +96,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof ValiError) {
       const messages = error.issues.map(issue => {
-        const path = issue.path?.map((p: { key: any; }) => p.key).join(".") || "unknown"
+        const path = issue.path?.map((p: { key: string }) => p.key).join(".") || "unknown";
         return `${path}: ${issue.message}`
       }).join(", ")
       
